@@ -11,6 +11,11 @@ using API.Interfaces;
 
 namespace API.Controllers
 {
+    // public interface IRepository<TEntiry> where TEntiry : class{
+    //     // Add, Delete, update, GetAll, Get(id).
+    //     // Responsitory<TEntiry> : IRepository<Tentiry>
+    //     // IUserReponsitory : IRepository<User>
+    // }
     public class AccountController : BaseApiController
     {
         private readonly DataContext _context;

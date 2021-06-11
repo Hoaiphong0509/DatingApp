@@ -10,6 +10,7 @@ namespace API.Extensions
             var age = today.Year - dob.Year;
             if(dob.Date > today.AddYears(-age)) age--;
             return age;
+
         }
     }
 }
