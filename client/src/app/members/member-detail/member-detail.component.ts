@@ -1,8 +1,11 @@
+import { MessageService } from './../../_services/message.service';
+import { Message } from './../../_models/message';
 import { Member } from 'src/app/_models/member';
 import { MembersService } from './../../_services/members.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 
 @Component({
   selector: 'app-member-detail',
@@ -10,14 +13,27 @@ import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
-  member!: Member
-  galleryOptions!: NgxGalleryOptions[];
-  galleryImages!: NgxGalleryImage[];
+  @ViewChild('memberTabs', {static: true}) memberTabs: TabsetComponent
+  
+  member: Member;
+  galleryOptions: NgxGalleryOptions[];
+  galleryImages: NgxGalleryImage[];
+  activeTab: TabDirective;
+  messages: Message[] = [];
 
-  constructor(private memberService: MembersService, private route: ActivatedRoute) { }
+  constructor(private memberService: MembersService, private route: ActivatedRoute,
+    private messageService: MessageService) { 
+
+  }
 
   ngOnInit(){
-    this.loadMember();
+    this.route.data.subscribe(data => {
+      this.member = data.member;
+    });
+
+    this.route.queryParams.subscribe(params => {
+      params.tab ? this.selectTab(params.tab) : this.selectTab(0);
+    })
 
     this.galleryOptions = [
       {
@@ -29,6 +45,8 @@ export class MemberDetailComponent implements OnInit {
         preview: false
       }
     ]
+
+    this.galleryImages = this.getImages();
   }
 
   getImages(): NgxGalleryImage[] {
@@ -47,7 +65,23 @@ export class MemberDetailComponent implements OnInit {
     this.memberService.getMember(this.route.snapshot.paramMap.get('username') || '')
       .subscribe(member =>{
         this.member=member;
-        this.galleryImages = this.getImages();
     })
+  }
+
+  loadMessages(){
+    this.messageService.getMessageThread(this.member.username).subscribe(messages => {
+      this.messages = messages;
+    })
+  }
+
+  selectTab(tabId: number){
+    this.memberTabs.tabs[tabId].active = true;
+  }
+
+  onTabActivated(data: TabDirective){
+    this.activeTab = data;
+    if(this.activeTab.heading === 'Messages' && this.messages.length === 0){
+      this.loadMessages()
+    }
   }
 }
