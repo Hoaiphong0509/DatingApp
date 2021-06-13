@@ -1,3 +1,4 @@
+import { LikesParams } from './../_models/likesParams';
 import { AccountService } from './account.service';
 import { UserParams } from './../_models/userParams';
 import { PaginatedResult, Pagination } from './../_models/pagination';
@@ -17,8 +18,13 @@ export class MembersService {
   members: Member[] = [];
   memberCache = new Map();
   user: User;
-  userParams: UserParams;
   
+  userParams: UserParams;
+
+  predicate: string;
+  pageNumber: number;
+  pageSize: number;
+
   constructor(private http: HttpClient, private accountService: AccountService) {
     this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
       this.user = user;
@@ -38,7 +44,6 @@ export class MembersService {
     this.userParams = new UserParams(this.user);
     return this.userParams
   }
-
   getMembers(userParams: UserParams) {
     var response = this.memberCache.get(Object.values(userParams).join('-'));
 
@@ -89,12 +94,23 @@ export class MembersService {
     return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
   }
 
+  addLike(username: string){
+    return this.http.post(this.baseUrl + 'likes/' + username, {})
+  }
+
+  getLikes(predicate: string, pageNumber, pageSize){
+    let params = this.getPaginationHeaders(pageNumber, pageSize);
+
+    params = params.append('predicate', predicate)
+    return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params)
+  }
+
   private getPaginatedResult<T>(url, params) {
     const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
     return this.http.get<T>(url, { observe: 'response', params }).pipe(
       map(response => {
         paginatedResult.result = response.body;
-        if (response.headers.get('Pagination') !== null) {
+        if (response.headers.get('Pagination') != null) {
           paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
         }
         return paginatedResult;

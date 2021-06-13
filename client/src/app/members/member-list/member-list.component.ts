@@ -16,6 +16,7 @@ export class MemberListComponent implements OnInit {
   userParams: UserParams;
   user: User;
   genderList: Object[] = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Females'}];
+
   constructor(private memberService: MembersService) {
     this.userParams = this.memberService.getUserParams();
   }
@@ -26,7 +27,6 @@ export class MemberListComponent implements OnInit {
 
   loadMembers() {
     this.memberService.setUserParams(this.userParams);
-
     this.memberService.getMembers(this.userParams).subscribe(response=> {
       this.members = response.result;
       this.pagination = response.pagination;
