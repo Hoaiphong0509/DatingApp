@@ -1,5 +1,4 @@
 import { Message } from './../_models/message';
-import { Member } from './../_models/member';
 import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';

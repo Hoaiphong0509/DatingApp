@@ -1,12 +1,10 @@
-import { LikesParams } from './../_models/likesParams';
 import { AccountService } from './account.service';
 import { UserParams } from './../_models/userParams';
-import { PaginatedResult, Pagination } from './../_models/pagination';
 import { Member } from './../_models/member';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { of, Observable } from 'rxjs';
+import { of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { User } from '../_models/user';
 import { getPaginatedResult, getPaginationHeaders } from '../_helper/paginationHelper';
