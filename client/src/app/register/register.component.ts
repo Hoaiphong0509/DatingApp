@@ -12,8 +12,8 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Vali
 })
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
-  registerForm: FormGroup = {} as FormGroup;
-  maxDate: Date = {} as Date;
+  registerForm: FormGroup;
+  maxDate: Date;
   validationErrors: string[] = [];
 
   constructor(private accountService: AccountService, 
